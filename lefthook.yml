@@ -1,0 +1,27 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: go-fmt
+      glob: "*.go"
+      run: test -z "$(gofmt -l {staged_files})" || { echo "gofmt needed:"; gofmt -l {staged_files}; exit 1; }
+    - name: go-vet
+      root: api/
+      glob: "*.go"
+      run: go vet ./...
+    - name: web-format
+      root: web/
+      glob: "*.{ts,vue,json}"
+      run: npx oxfmt --check src/
+    - name: web-lint
+      root: web/
+      glob: "*.{ts,vue}"
+      run: npx oxlint .
+
+# Conventional Commits via global commitlint (pnpm add -g @commitlint/cli @commitlint/config-conventional).
+# NODE_PATH lets the global install resolve the global config-conventional.
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: |
+        export NODE_PATH="$(dirname "$(dirname "$(pnpm ls -g --parseable --depth=0 | grep config-conventional)")")"
+        commitlint --edit {1}

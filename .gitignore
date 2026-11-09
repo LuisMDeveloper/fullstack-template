@@ -1,0 +1,16 @@
+api/internal/webui/dist/
+bin/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Go
+*.test
+*.out
+coverage.txt
+
+# OS / editors
+.DS_Store
+.idea/
